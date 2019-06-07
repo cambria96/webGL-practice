@@ -1,4 +1,4 @@
-//import { toRadian } from "gl-matrix/src/gl-matrix/common";
+import { toRadian } from "gl-matrix/src/gl-matrix/common";
 
 var gl;
 
