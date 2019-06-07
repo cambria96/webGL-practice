@@ -1,4 +1,4 @@
-import { toRadian } from "gl-matrix/src/gl-matrix/common";
+//import { toRadian } from "gl-matrix/src/gl-matrix/common";
 
 var gl;
 
@@ -35,7 +35,7 @@ function zoomValue(value){
 
 	zoombit = value/100;
 	document.getElementById("zoom").innerHTML = "Zoom in/out : " + zoombit;
-	console.log(toRadian(value));
+	//console.log(toRadian(value));
 	
 }	
 
