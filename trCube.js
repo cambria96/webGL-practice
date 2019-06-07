@@ -1,3 +1,5 @@
+import { toRadian } from "gl-matrix/src/gl-matrix/common";
+
 var gl;
 
 function testGLError(functionLastCalled) {
@@ -29,6 +31,20 @@ function initialiseGL(canvas) {
     return true;
 }
 
+function zoomValue(value){
+
+	zoombit = value/100;
+	document.getElementById("zoom").innerHTML = "Zoom in/out : " + zoombit;
+	console.log(toRadian(value));
+	
+}	
+
+function projectionValue(value){
+
+	projectionbit = value/100;
+	document.getElementById("projection").innerHTML = "projection : " + projectionbit;
+}
+
 function insertImage(){
 
 	imagebit = 1;
@@ -58,6 +74,8 @@ var repeatbit = 0;
 var clampbit = 0;
 var mirrorbit = 0;
 var deletebit = 0;
+var zoombit = 5;
+var projectionbit = 7;
 
 function initialiseBuffer() {
 
@@ -308,11 +326,11 @@ function get_projection(angle, a, zMin, zMax) {
         0, 0, (-2*zMax*zMin)/(zMax-zMin), 0 ];
 }
 			
-var proj_matrix = get_projection(30, 1.0, 1, 8.0);
+var proj_matrix = get_projection(30, 1.0, 1, 7.0);
 var mov_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
 var view_matrix = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
 // translating z
-view_matrix[14] = view_matrix[14]-2.5;//zoom
+view_matrix[14] = view_matrix[14]-5//zoom
 
 function idMatrix(m) {
     m[0] = 1; m[1] = 0; m[2] = 0; m[3] = 0; 
@@ -479,6 +497,21 @@ function trXinc()
 
 function renderScene() {
 
+	if(zoombit != 5){
+		view_matrix[14] = -zoombit;//zoom
+		if(!initialiseShaders()){
+			return;
+		}
+		zoombit=5;
+	}
+
+	if(projectionbit !=7){
+		proj_matrix = get_projection(30, 1.0, 1, projectionbit); // set z-buffer 
+		if(!initialiseShaders()){
+			return;
+		}
+		projectionbit = 7;
+	}
 
 	if(repeatbit == 1 ){
 		if(!initialiseBuffer()){
