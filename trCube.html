@@ -18,9 +18,6 @@
 	<button onclick="insertImage()">Input Image&nbsp&nbsp </button>
 	&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 	<button onclick="repeatImage()">Repeat Image</button>
-
-	
-	
 	<button onclick="mirrorImage()">Mirrored Repeat Image</button>
 	<button onclick="clampImage()">Clamp Edge Image</button>
 	<br>
@@ -29,6 +26,7 @@
 	<button onclick="trXinc()">Translate X + 0.1</button>
 	<button onclick="animRotate()">Animation Rotate + 0.01</button>
 	<button onclick="stopRotate()">Stop Rotate</button>
+
 	<table border=1> 
 	<tr > 
 	<td id="matrix0"> 	<td id="matrix4">  	<td id="matrix8">  	<td id="matrix12"> 
@@ -40,16 +38,14 @@
 	<td id="matrix3"> 	<td id="matrix7">  	<td id="matrix11">  	<td id="matrix15"> 
 	</table>
 	<p id="webTrX"> Test </p>
-	<script language = "javascript">
 
-		function zoomValue(this)	
-		{	
-			range_val.value = this.value;
-		}	
-		</script>	
-		<input type = "text" name = "range_val" value "" >
-	<input type="range" name="points" min="0" max="100" onchange = "zoomValue(this)"> 
 	
+	<t id="zoom"> Zoom in/out : 5     </t>&nbsp&nbsp
+	<t id="projection"> projection : 7</t><br>
+	<input type="range" value="500" min="250" max="750" oninput = "zoomValue(this.value)">
+	<input type="range" value="700" min="400" max="1000" oninput = "projectionValue(this.value)">
+
+		
 	<div style="position: relative; left:600px; bottom: 850px;">
 		<div style="overflow:scroll; width:800px; height:400px;">
 			<pre>	if(repeatbit == 1){	
