@@ -1,115 +1,188 @@
+<!-- (CC-NC-BY) 여인혁 2019 -->
 <html>
 
 <head>
-<title>WebGLHelloAPI</title>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-
-<script type="text/javascript" src="trCube
-.js">
-</script>
-
-
+	<title>WebGLHelloAPI</title>
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+	<script type="text/javascript" src="trCube
+.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
-<body onload="main()">
-    <canvas id="helloapicanvas" style="border: none;" width="600" height="600"></canvas>
-	<br>
-	<big><b>Image Rendering</b></big> <br>
-	<button onclick="insertImage()">Input Image&nbsp&nbsp </button>
-	&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-	<button onclick="repeatImage()">Repeat Image</button>
-	<button onclick="mirrorImage()">Mirrored Repeat Image</button>
-	<button onclick="clampImage()">Clamp Edge Image</button>
-	<br>
-	<button onclick="deleteImage()">Delete Image</button>
-	<br><br>
-	<button onclick="trXinc()">Translate X + 0.1</button>
-	<button onclick="animRotate()">Animation Rotate + 0.01</button>
-	<button onclick="stopRotate()">Stop Rotate</button>
+<body bgcolor='#f1f1f1' onload="main()">
+	<header>
+		welcome to my WebGL!
+	</header>
 
-	<table border=1> 
-	<tr > 
-	<td id="matrix0"> 	<td id="matrix4">  	<td id="matrix8">  	<td id="matrix12"> 
-	<tr> 
-	<td id="matrix1"> 	<td id="matrix5">  	<td id="matrix9">  	<td id="matrix13"> 
-	<tr> 
-	<td id="matrix2"> 	<td id="matrix6">  	<td id="matrix10">  	<td id="matrix14"> 
-	<tr> 
-	<td id="matrix3"> 	<td id="matrix7">  	<td id="matrix11">  	<td id="matrix15"> 
-	</table>
-	<p id="webTrX"> Test </p>
+	<nav>
+		<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+		<br>
+	</nav>
 
-	
-	<t id="zoom"> Zoom in/out : 5     </t>&nbsp&nbsp
-	<t id="projection"> projection : 7</t><br>
-	<input type="range" value="500" min="250" max="750" oninput = "zoomValue(this.value)">
-	<input type="range" value="700" min="400" max="1000" oninput = "projectionValue(this.value)">
+	<article>
+		<ul>
+			<li>
+				<a onclick="Transformation.style.display=(Transformation.style.display=='none')?'block':'none';"
+					href="javascript:void(0)">
+					<big>Transformation</big>
+				</a>
+			</li>
+			<li>
+				<a onclick="Texture.style.display=(Texture.style.display=='none')?'block':'none';"
+					href="javascript:void(0)">
+					<big>Texture Mapping</big>
+				</a>
+			</li>
 
-		
-	<div style="position: relative; left:600px; bottom: 850px;">
-		<div style="overflow:scroll; width:800px; height:400px;">
-			<pre>	if(repeatbit == 1){	
+			<li>
+				<a onclick="ZBuffer.style.display=(ZBuffer.style.display=='none')?'block':'none';"
+					href="javascript:void(0)">
+					<big>Z-Buffering</big>
+				</a>
+			</li>
+		</ul>
 
-		var vertexData = [
-			-0.5, 0.5, 0.5,		1.0, 1.0, 1.0, 0.5,		0.0, 1.0,  0.0, 1.0, 0.0, //3
-			0.5, 0.5, 0.5,		1.0, 1.0, 1.0, 0.5,		1.0, 1.0,  0.0, 1.0, 0.0, //1
-			0.5, 0.5, -0.5,		1.0, 1.0, 1.0, 0.5,		1.0, 1.0,  0.0, 1.0, 0.0, //2
-					
-			-0.5, 0.5, 0.5,		1.0, 1.0, 1.0, 0.5,		0.0, 1.0,  0.0, 1.0, 0.0, //3
-			0.5, 0.5, -0.5,		1.0, 1.0, 1.0, 0.5,		1.0, 1.0,  0.0, 1.0, 0.0, //2
-			-0.5, 0.5, -0.5,	1.0, 1.0, 1.0, 0.5,		0.0, 1.0,  0.0, 1.0, 0.0, //4
-			 
-			0.5, 0.5, -0.5,		0.0, 0.0, 0.0, 0.5,		-1.0, -1.0,  0.0, 0.0, -1.0,	//2
-			0.5, -0.5, -0.5,	0.0, 0.0, 0.0, 0.5,		2.0, -1.0,  0.0, 0.0, -1.0, 	//6
-			-0.5,-0.5,-0.5,		0.0, 0.0, 0.0, 0.5,		2.0, 2.0,  0.0, 0.0, -1.0, 		//8 //뒷면
-			   
-			-0.5, 0.5, -0.5,	0.0, 0.0, 0.0, 0.5,		-1.0, 2.0,  0.0, 0.0, -1.0, //4
-			0.5, 0.5, -0.5,		0.0, 0.0, 0.0, 0.5,		-1.0, -1.0,  0.0, 0.0, -1.0, //2
-			-0.5,-0.5,-0.5,		0.0, 0.0, 0.0, 0.5,		2.0, 2.0,  0.0, 0.0, -1.0, //8
-				
-			0.5, -0.5, 0.5,		1.0, 0.5, 0.0, 0.5,		0.0, 1.0,  1.0, 0.0, 0.0, //5
-			0.5, -0.5, -0.5,	1.0, 0.5, 0.0, 0.5,		0.0, 1.0,  1.0, 0.0, 0.0, //6
-			0.5, 0.5, -0.5,		1.0, 0.5, 0.0, 0.5,		1.0, 1.0,  1.0, 0.0, 0.0, //2
-	
-			0.5, -0.5, 0.5,		1.0, 0.5, 0.0, 0.5,		0.0, 1.0,  1.0, 0.0, 0.0, //5
-			0.5, 0.5, -0.5,		1.0, 0.5, 0.0, 0.5,		1.0, 1.0,  1.0, 0.0, 0.0, //2
-			0.5, 0.5, 0.5,		1.0, 0.5, 0.0, 0.5,		1.0, 1.0,  1.0, 0.0, 0.0, //1
-					 
-			-0.5, 0.5, -0.5,	1.0, 0.0, 0.0, 0.5,		0.0, 1.0,  -1.0, 0.0, 0.0, //4
-			-0.5,-0.5, -0.5,	1.0, 0.0, 0.0, 0.5,		0.0, 0.0,  -1.0, 0.0, 0.0, //8
-			-0.5, -0.5, 0.5,	1.0, 0.0, 0.0, 0.5,		0.0, 0.0,  -1.0, 0.0, 0.0, //7
-			
-			-0.5, 0.5, 0.5,		1.0, 0.0, 0.0, 0.5,		0.0, 1.0,  -1.0, 0.0, 0.0,	//3
-			-0.5, 0.5, -0.5,	1.0, 0.0, 0.0, 0.5,		0.0, 1.0,  -1.0, 0.0, 0.0,	//4
-			-0.5, -0.5, 0.5,	1.0, 0.0, 0.0, 0.5,		0.0, 0.0,  -1.0, 0.0, 0.0,	//7
-			
-			-0.5, -0.5, 0.5,	0.0, 0.0, 1.0, 0.5,		2.0, 2.0,   0.0, 0.0, 1.0, //7
-			0.5, -0.5, 0.5,		0.0, 0.0, 1.0, 0.5,		-1.0, 2.0,  0.0, 0.0, 1.0,  //5
-			0.5, 0.5, 0.5,		0.0, 0.0, 1.0, 0.5,	    -1.0, -1.0,  0.0, 0.0, 1.0,  //1 // 앞면
-					 
-			-0.5, -0.5, 0.5,	0.0, 0.0, 1.0, 0.5,		2.0, 2.0,   0.0, 0.0, 1.0,   //7
-			0.5, 0.5, 0.5,		0.0, 0.0, 1.0, 0.5,	    -1.0, -1.0,  0.0, 0.0, 1.0,	 //1
-			-0.5, 0.5, 0.5,		0.0, 0.0, 1.0, 0.5,	    2.0,  -1.0,   0.0, 0.0, 1.0,  //3
-			
-			 0.5, -0.5, -0.5,	0.0, 1.0, 0.0, 0.5,		1.0, 0.0,   0.0, -1.0, 0.0,	//6
-			 0.5, -0.5, 0.5,	0.0, 1.0, 0.0, 0.5,		1.0, 0.0,   0.0, -1.0, 0.0, //5
-			-0.5, -0.5, 0.5,	0.0, 1.0, 0.0, 0.5,		0.0, 0.0,   0.0, -1.0, 0.0, //7
-			
-			-0.5,-0.5, -0.5,	0.0, 1.0, 0.0, 0.5,		0.0, 0.0,  0.0, -1.0, 0.0, 	//8
-			 0.5, -0.5, -0.5,	0.0, 1.0, 0.0, 0.5,		1.0, 0.0,  0.0, -1.0, 0.0, 	//6
-			-0.5, -0.5, 0.5,	0.0, 1.0, 0.0, 0.5,		0.0, 0.0,  0.0, -1.0, 0.0,	//7
-		];
-		if(clampbit == 1 ){
-			gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
-			gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-		}
-		if(mirrorbit == 1){
-			gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.MIRRORED_REPEAT);
-			gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.MIRRORED_REPEAT);
-		}
-			}</pre>
-		</div> 
+		<div style="DISPLAY: none" id="Transformation">
+			<br><br>
+			<button onclick="trXinc()">Translate X + 0.1</button><br>
+			<button onclick="animRotate()">Animation Rotate + 0.01</button><br>
+			<button onclick="stopRotate()">Stop Rotate</button>
+
+			<table border=1>
+				<tr>
+					<td id="matrix0">
+					<td id="matrix4">
+					<td id="matrix8">
+					<td id="matrix12">
+				<tr>
+					<td id="matrix1">
+					<td id="matrix5">
+					<td id="matrix9">
+					<td id="matrix13">
+				<tr>
+					<td id="matrix2">
+					<td id="matrix6">
+					<td id="matrix10">
+					<td id="matrix14">
+				<tr>
+					<td id="matrix3">
+					<td id="matrix7">
+					<td id="matrix11">
+					<td id="matrix15">
+			</table>
+			<p id="webTrX"> Test </p>
+
+		</div>
+		<br>
+		<div style="DISPLAY: none" id=Texture>
+
+			<br>
+			<button onclick="insertImage()">Input Image&nbsp&nbsp </button>&nbsp;
+			<button onclick="deleteImage()">Delete Image</button>
+			<p>
+				The pixels in the texture will be addressed using texture coordinates during drawing operations.
+				These coordinates range from 0.0 to 1.0 where (0,0) is conventionally the bottom-left corner and
+				(1,1) is the top-right corner of the texture image.
+			</p>
+			<big><b>Wrapping</b></big>&nbsp;&nbsp;
+			<button id="myBtn" onclick="clickbutton(textureMapping)">Source Code</button>
+
+			<p>
+				GL_REPEAT: The integer part of the coordinate will be ignored and a repeating pattern is formed.<br>
+				GL_MIRRORED_REPEAT: The texture will also be repeated, but it will be mirrored when the integer part of
+				the coordinate is odd.<br>
+				GL_CLAMP_TO_EDGE: The coordinate will simply be clamped between 0 and 1.
+			</p>
+
+			<input type="radio" name="radio_answer" value="1" oninput="Wrapping(this.value)" />
+			<font>Texture_Wrap_S</font>
+			<input type="radio" name="radio_answer" value="2" oninput="Wrapping(this.value)" />
+			<font>Texture_Wrap_T</font>
+			<input type="radio" name="radio_answer" value="3" checked oninput=" Wrapping(this.value)" />
+			<font>Both</font><br><br>
+
+			<button onclick="repeatImage()">Repeat Image</button>
+			<button onclick="mirrorImage()">Mirrored Repeat Image</button>
+			<button onclick="clampImage()">Clamp Edge Image</button>
+
+		</div>
+		<br>
+		<div style="DISPLAY: none" id="ZBuffer">
+
+			<p>
+				z-buffering, also known as depth buffering, is the management of image depth coordinates in 3D graphics,
+				In a 3d-rendering engine, when an object is projected on the screen,
+				the depth (z-value) of a generated pixel in the projected screen image is stored in a buffer (the
+				z-buffer or depth buffer).
+				A z-value is the measure of the perpendicular distance from a pixel on the projection plane to its
+				corresponding 3d-coordinate on a polygon in world-space.<br>
+				When viewing an image containing partially or fully overlapping opaque objects or surfaces,
+				it is not possible to fully see those objects that are furthest away from the viewer and behind other
+				objects
+			</p>
+
+			<t id="zoom"> Zoom in/out : 5 </t>&nbsp&nbsp
+			<t id="projection"> projection : 7</t><br>
+			<input type="range" value="500" min="250" max="750" oninput="zoomValue(this.value)">
+			<input type="range" value="700" min="400" max="1000" oninput="projectionValue(this.value)">
+
+		</div>
+	</article>
+	<footer>
+		<p>create by IN HYEOK!!!!!!!!!!!!!!!!</p>
+	</footer>
 	</div>
+
+	<!-- Source Code Section Using Modal -->
+
+	<!-- Modal content -->
+	<div id="textureMapping" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="clickspan(textureMapping)">&times;</span>
+			<pre>
+// Initialize Buffer			
+// Input image
+var texture = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, texture);
+
+// Fill the texture with a 1x1 blue pixel.
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+new Uint8Array([0, 0, 255, 255]));
+
+// Asynchronously load an image
+var image = new Image();
+image.src = "";
+image.addEventListener('load', function() {
+
+// Now that the image has loaded make copy it to the texture.
+gl.bindTexture(gl.TEXTURE_2D, texture);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, image);
+gl.generateMipmap(gl.TEXTURE_2D);
+});
+
+// When click Clamp Edge Image button
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+
+// When click Mirrored Repeat Image button
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.MIRRORED_REPEAT);
+gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.MIRRORED_REPEAT);
+-----------------------------------------------------------------------------------------
+// Fragment Shader 
+var fragmentShaderSource = '\
+varying mediump vec4 color; \
+varying mediump vec2 texCoord;\
+uniform sampler2D sampler2d; \
+void main(void) \
+{ \
+	gl_FragColor = texture2D(sampler2d, texCoord);\
+}';
+
+
+		</pre>
+		</div>
+	</div>
+
 </body>
 
 </html>

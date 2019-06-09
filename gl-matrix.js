@@ -7541,7 +7541,7 @@ THE SOFTWARE.
   exports.vec2 = vec2;
   exports.vec3 = vec3;
   exports.vec4 = vec4;
-
+  
   Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
