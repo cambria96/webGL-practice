@@ -1,11 +1,8 @@
 // (CC-NC-BY) 여인혁 2019
 var gl;
 
-function toggle(div){
-	document.getElementById('ZBuffer').style.display ='none';
-	document.getElementById('Transformation').style.display ='none';
-	console.log("dfs");
-}
+//translate x,y,z
+
 
 function testGLError(functionLastCalled) {
 
@@ -44,6 +41,42 @@ function clickbutton(modal) {
 // When the user clicks on <span> (x), close the modal
 function clickspan(modal) {
 	modal.style.display = "none";
+}
+
+// When the user clicks on Translate! button, translate vertex.
+function submitTrans(x, y, z) {
+
+	x *= 1;
+	y *= 1;
+	z *= 1;
+	transX = transX + x;
+	transY = transY + y;
+	transZ = transZ + z;
+	document.getElementById("webTrX").innerHTML = "translate (" + transX.toFixed(1) + "," + transY.toFixed(1) + "," + transZ.toFixed(1) + ")";
+
+}
+
+// When the user clicks on reset, set translate (0,0,0)
+function resetTrans() {
+	transX = 0;
+	transY = 0;
+	transZ = 0;
+	document.getElementById("webTrX").innerHTML = "translate (" + transX.toFixed(1) + "," + transY.toFixed(1) + "," + transZ.toFixed(1) + ")";
+
+}
+
+// When the user clicks on rotate, control rotate type.
+function rotateShape(rotatetype){
+
+
+	if(rotatebit == rotatetype){
+		incRotValue += 0.01;
+	}
+	else{
+		incRotValue = 0.01;
+
+	}
+	rotatebit = rotatetype;
 }
 
 // processing range value of zoom
@@ -110,6 +143,8 @@ function changetoCube() {
 	shapedraw = 0;;
 }
 
+
+
 //select GL_TEXTURE_WRAP
 function Wrapping(value) {
 	switch (value) {
@@ -132,6 +167,7 @@ function Wrapping(value) {
 	}
 }
 var shaderProgram;
+var rotatebit =0; // xrotate : 1, yrotate : 2, zrotate : 3, axisrotate :4;
 var imagebit = 0; 	//input : 1 delete : 0
 var inputbit = 0;	//inputimage : 1
 var repeatbit = 0;	//deleteimage : 1
@@ -171,21 +207,21 @@ function initialiseBuffer() {
 
 		var vertexData2 = [
 
-			-0.5, -0.5, 0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0, 1.0,1.0,1.0,
-			0.5, -0.5, -0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
-			0.5, 0.5,0.5,      1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
+			-0.5, -0.5, 0.5, 1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, 1.0,
+			0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, 1.0,
+			0.5, 0.5, 0.5, 1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, 1.0,
 
-			-0.5, -0.5, 0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-			0.5, 0.5,0.5,      0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-			-0.5, 0.5, -0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, -1.0,
+			0.5, 0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, -1.0,
+			-0.5, 0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, -1.0,
 
-			-0.5, -0.5,0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0,  1.0,-1.0,1.0,
-			0.5, -0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
-			-0.5, 0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
+			-0.5, -0.5, 0.5, 1.0, 0.0, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 1.0,
+			0.5, -0.5, -0.5, 1.0, 0.0, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 1.0,
+			-0.5, 0.5, -0.5, 1.0, 0.0, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 1.0,
 
-			0.5, 0.5,0.5,   1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
-			-0.5, 0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
-			0.5, -0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0,  1.0,-1.0,-1.0,  // 정사면체
+			0.5, 0.5, 0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
+			-0.5, 0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
+			0.5, -0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,  // 정사면체
 
 		]
 
@@ -264,22 +300,22 @@ function initialiseBuffer() {
 	else {
 
 		var vertexData2 = [
-			
-			-0.5, -0.5, 0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0, 1.0,1.0,1.0,
-			0.5, -0.5, -0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
-			0.5, 0.5,0.5,      1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
 
-			-0.5, -0.5, 0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-			0.5, 0.5,0.5,      0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-			-0.5, 0.5, -0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+			-0.5, -0.5, 0.5, 1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, 1.0,
+			0.5, -0.5, -0.5, 1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, 1.0,
+			0.5, 0.5, 0.5, 1.0, 0.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, 1.0,
 
-			-0.5, -0.5,0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0,  1.0,-1.0,1.0,
-			0.5, -0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
-			-0.5, 0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
+			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, -1.0,
+			0.5, 0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, -1.0,
+			-0.5, 0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, 1.0, -1.0,
 
-			0.5, 0.5,0.5,   1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
-			-0.5, 0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
-			0.5, -0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0,  1.0,-1.0,-1.0,  // 정사면체
+			-0.5, -0.5, 0.5, 1.0, 0.0, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 1.0,
+			0.5, -0.5, -0.5, 1.0, 0.0, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 1.0,
+			-0.5, 0.5, -0.5, 1.0, 0.0, 1.0, 0.5, 0.0, 1.0, 1.0, -1.0, 1.0,
+
+			0.5, 0.5, 0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
+			-0.5, 0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
+			0.5, -0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,  // 정사면체
 		]
 
 		var vertexData = [
@@ -338,11 +374,11 @@ function initialiseBuffer() {
 	gl.vertexBuffer = gl.createBuffer();
 	// Bind buffer as a vertex buffer so we can fill it with data
 	gl.bindBuffer(gl.ARRAY_BUFFER, gl.vertexBuffer);
-	if(shapebit == 1){
+	if (shapebit == 1) {
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData2), gl.STATIC_DRAW);
 
 	}
-	else{
+	else {
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
 
 	}
@@ -599,6 +635,9 @@ incRotValue = 0.0;
 incRotValueSmall = 0.02;
 
 transX = 0.0;
+transY = 0.0;
+transZ = 0.0;
+
 frames = 1;
 tempRotValue = 0.0;
 function stopRotate() {
@@ -615,24 +654,19 @@ function animRotate() {
 	incRotValue += 0.01;
 }
 
-function trXinc() {
-	transX += 0.01;
-	document.getElementById("webTrX").innerHTML = "transX : " + transX.toFixed(4);
-}
+function requireControl() {
 
-function requireControl(){
-
-	if(shapebit == 1 &&lock ==0){
+	if (shapebit == 1 && lock == 0) {
 		if (!initialiseBuffer()) {
 			return;
 		}
 		lock = 1;
 	}
-	else if(shapebit ==0 && lock == 1){
+	else if (shapebit == 0 && lock == 1) {
 		if (!initialiseBuffer()) {
 			return;
 		}
-		lock =0;
+		lock = 0;
 	}
 
 	if (zoombit != 5) {
@@ -677,26 +711,40 @@ function requireControl(){
 		deletebit = 0;
 	}
 
+	idMatrix(mov_matrix);
+	frames += 1;
+	rotAxis = [1, 1, 0];
+
+
+	switch(rotatebit){
+
+		case 1 : 	rotateX(mov_matrix,rotValue);
+		break;
+
+		case 2 : 	rotateY(mov_matrix,rotValue);
+		break;
+
+		case 3 : 	rotateZ(mov_matrix,rotValue);
+		break;
+
+		case 4 : 	rotateArbAxis(mov_matrix, rotValue, rotAxis);
+		break;
+	}
+
 }
 
 function renderScene() {
 
 	requireControl();
-
-	//console.log("Frame "+frames+"\n");
-	frames += 1;
-	rotAxis = [1, 1, 0];
-
+	
 	var Pmatrix = gl.getUniformLocation(gl.programObject, "Pmatrix");
 	var Vmatrix = gl.getUniformLocation(gl.programObject, "Vmatrix");
 	var Mmatrix = gl.getUniformLocation(gl.programObject, "Mmatrix");
 	var Nmatrix = gl.getUniformLocation(gl.programObject, "Nmatrix");
-
-	idMatrix(mov_matrix);
-	rotateArbAxis(mov_matrix, rotValue, rotAxis);
+	
 	rotValue += incRotValue;
 	rotValueSmall += incRotValueSmall;
-	translate(mov_matrix, transX, 0.0, 0.0);
+	translate(mov_matrix, transX, transY, transZ);
 
 	gl.uniformMatrix4fv(Pmatrix, false, proj_matrix);
 	gl.uniformMatrix4fv(Vmatrix, false, view_matrix);
@@ -730,11 +778,11 @@ function renderScene() {
 	gl.clearDepth(1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	if(shapedraw == 1){
+	if (shapedraw == 1) {
 		gl.drawArrays(gl.TRIANGLES, 0, 12);
 
 	}
-	else if(shapedraw == 0){
+	else if (shapedraw == 0) {
 		gl.drawArrays(gl.TRIANGLES, 0, 36);
 
 	}

@@ -51,28 +51,41 @@
 			<img src="pipeline.png"><br><br>
 
 			<big><b>Translation</b></big>&nbsp;&nbsp;
-			<button id="translation" onclick="clickbutton(textureMapping)">Source Code</button>
-
+			<button id="trans" onclick="clickbutton(translation)">Source Code</button>
 
 			<p>
 				A translation moves a vector a certain distance in a certain direction.
 			</p>
-			<img src = "translation.png"><br>
+			<img src="translate.png"><br><br>
 
-			<button onclick="trXinc()">Translate X + 0.1</button><br><br>
+			<t>tx:</t>
+			<input type="text" id="xTranslate" maxlength="4" style=width:30px;>
+			<t>ty:</t>
+			<input type="text" id="yTranslate" maxlength="4" style=width:30px;>
+			<t>tz:</t>
+			<input type="text" id="zTranslate" maxlength="4" style=width:30px;>
+			<button onclick="submitTrans(xTranslate.value, yTranslate.value, zTranslate.value)">Translate!</button>
+			<button onclick="resetTrans()">Reset</button><br><br>
 
 			<big><b>Rotation</b></big>&nbsp;&nbsp;
+			<button id="rotation" onclick="clickbutton(rotate)">Source Code</button>
+
 
 			<p>
 				A rotation transformation rotates a vector around the origin (0,0,0) using a given axis and angle.
 			</p>
-			<img src = "xrotate.png"><img src = "yrotate.png"><img src = "zrotate.png">
-			<button id="rotation" onclick="clickbutton(textureMapping)">Source Code</button>
+			<img src="rotate.png"><br><br>
 
-			<button onclick="animRotate()">Animation Rotate + 0.01</button><br>
+			<button onclick="rotateShape(1)">X Rotate Speed + 0.01</button>
+			<button onclick="rotateShape(2)">Y Rotate Speed + 0.01</button>
+			<button onclick="rotateShape(3)">Z Rotate Speed + 0.01</button>
+			<button onclick="rotateShape(4)">Axis Rotate Speed + 0.01</button>
+
+
+
 			<button onclick="stopRotate()">Stop Rotate</button>
 
-			
+
 
 		</div>
 		<br>
@@ -112,14 +125,16 @@
 		<div style="DISPLAY: none" id="ZBuffer">
 
 			<t>
-				z-buffering, also known as depth buffering, is the management of image depth coordinates in 3D graphics,<br>
+				z-buffering, also known as depth buffering, is the management of image depth coordinates in 3D
+				graphics,<br>
 				In a 3d-rendering engine, when an object is projected on the screen,<br>
 				the depth (z-value) of a generated pixel in the projected screen image is stored in a buffer (the<br>
 				z-buffer or depth buffer).<br>
 				A z-value is the measure of the perpendicular distance from a pixel on the projection plane to its<br>
 				corresponding 3d-coordinate on a polygon in world-space.<br>
 				When viewing an image containing partially or fully overlapping opaque objects or surfaces,<br>
-				it is not possible to fully see those objects that are furthest away from the viewer and behind other<br>
+				it is not possible to fully see those objects that are furthest away from the viewer and behind
+				other<br>
 				objects
 			</t><br><br>
 
@@ -131,33 +146,33 @@
 		</div>
 	</article>
 	<footer>
-			<button onclick="changetoTetrahedron()">Tetrahedron </button>&nbsp;
-			<button onclick="changetoCube()">Cube </button>&nbsp;
-			<table border=1>
-				<tr>
-					<td id="matrix0">
-					<td id="matrix4">
-					<td id="matrix8">
-					<td id="matrix12">
-				<tr>
-					<td id="matrix1">
-					<td id="matrix5">
-					<td id="matrix9">
-					<td id="matrix13">
-				<tr>
-					<td id="matrix2">
-					<td id="matrix6">
-					<td id="matrix10">
-					<td id="matrix14">
-				<tr>
-					<td id="matrix3">
-					<td id="matrix7">
-					<td id="matrix11">
-					<td id="matrix15">
-			</table>
-			<p id="webTrX"> translate (0,0,0) </p>
+		<button onclick="changetoTetrahedron()">Tetrahedron </button>&nbsp;
+		<button onclick="changetoCube()">Cube </button>&nbsp;
+		<table border=1>
+			<tr>
+				<td id="matrix0">
+				<td id="matrix4">
+				<td id="matrix8">
+				<td id="matrix12">
+			<tr>
+				<td id="matrix1">
+				<td id="matrix5">
+				<td id="matrix9">
+				<td id="matrix13">
+			<tr>
+				<td id="matrix2">
+				<td id="matrix6">
+				<td id="matrix10">
+				<td id="matrix14">
+			<tr>
+				<td id="matrix3">
+				<td id="matrix7">
+				<td id="matrix11">
+				<td id="matrix15">
+		</table>
+		<p id="webTrX"> translate (0.0,0.0,0.0) </p>
 
-		</footer>
+	</footer>
 	</div>
 
 	<!-- Source Code Section Using Modal -->
@@ -208,6 +223,60 @@ void main(void) \
 		</pre>
 		</div>
 	</div>
+
+	<div id="translation" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="clickspan(translation)">&times;</span>
+			<pre>
+// multiplication function
+function translate(m, tx, ty, tz) {
+	var tm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+	tm[12] = tx; tm[13] = ty; tm[14] = tz;
+	mulMatrix(m, tm);
+}
+				
+
+-----------------------------------------------------------------------------------------
+// renderscene		
+var Pmatrix = gl.getUniformLocation(gl.programObject, "Pmatrix");
+var Vmatrix = gl.getUniformLocation(gl.programObject, "Vmatrix");
+var Mmatrix = gl.getUniformLocation(gl.programObject, "Mmatrix");
+
+idMatrix(mov_matrix); // create matrix
+translate(mov_matrix, transX, transY, transZ);
+gl.uniformMatrix4fv(Mmatrix, false, mov_matrix);
+-----------------------------------------------------------------------------------------
+// vertex shader
+var vertexShaderSource = '\
+	attribute highp vec3 myVertex; \
+	attribute highp vec4 myColor; \
+	uniform mediump mat4 Pmatrix; \
+	uniform mediump mat4 Vmatrix; \
+	uniform mediump mat4 Mmatrix; \
+	varying mediump vec4 color; \
+	void main(void)  \
+	{ \
+		gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(myVertex, 1.0);\
+		color = myColor;\
+	}';
+
+gl.vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(gl.vertexShader, vertexShaderSource);
+gl.compileShader(gl.vertexShader);
+			</pre>
+		</div>
+	</div>
+
+	<div id="rotate" class="modal">
+			<div class="modal-content">
+				<span class="close" onclick="clickspan(rotate)">&times;</span>
+				<pre>
+
+
+	
+				</pre>
+			</div>
+		</div>
 
 </body>
 
