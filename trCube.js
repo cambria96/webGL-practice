@@ -1,6 +1,11 @@
 // (CC-NC-BY) 여인혁 2019
 var gl;
 
+function toggle(div){
+	document.getElementById('ZBuffer').style.display ='none';
+	document.getElementById('Transformation').style.display ='none';
+	console.log("dfs");
+}
 
 function testGLError(functionLastCalled) {
 
