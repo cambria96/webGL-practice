@@ -94,6 +94,17 @@ function deleteImage() {
 	deletebit = 1;
 }
 
+function changetoTetrahedron() {
+
+	shapebit = 1;
+	shapedraw = 1;
+}
+function changetoCube() {
+
+	shapebit = 0;
+	shapedraw = 0;;
+}
+
 //select GL_TEXTURE_WRAP
 function Wrapping(value) {
 	switch (value) {
@@ -126,6 +137,9 @@ var zoombit = 5;    //zoomsize 2.5~7.5
 var projectionbit = 7; //zMax 4~10
 var wrapT = 1; // gl.TEXTURE_WRAP_T : 1
 var wrapS = 1; // gl.TEXTURE_WRAP_S : 1
+var shapebit = -1; // cube : 0 tetrahedron : 1 when initialize buffer
+var shapedraw = 0; // cube : 0 tetrahedron : 1 when drawarrays
+var lock = 0; // when change shape, only one time  initialize buffer
 
 
 function initialiseBuffer() {
@@ -149,6 +163,26 @@ function initialiseBuffer() {
 	//gl.texParameterfv(gl.TEXTURE_2D, gl.TEXTURE_BORDER_COLOR, borderColor);
 
 	if (repeatbit == 1) {
+
+		var vertexData2 = [
+
+			-0.5, -0.5, 0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0, 1.0,1.0,1.0,
+			0.5, -0.5, -0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
+			0.5, 0.5,0.5,      1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
+
+			-0.5, -0.5, 0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+			0.5, 0.5,0.5,      0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+			-0.5, 0.5, -0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+
+			-0.5, -0.5,0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0,  1.0,-1.0,1.0,
+			0.5, -0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
+			-0.5, 0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
+
+			0.5, 0.5,0.5,   1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
+			-0.5, 0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
+			0.5, -0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0,  1.0,-1.0,-1.0,  // 정사면체
+
+		]
 
 		var vertexData = [
 			//
@@ -226,26 +260,24 @@ function initialiseBuffer() {
 
 		var vertexData2 = [
 			
+			-0.5, -0.5, 0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0, 1.0,1.0,1.0,
+			0.5, -0.5, -0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
+			0.5, 0.5,0.5,      1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
 
+			-0.5, -0.5, 0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+			0.5, 0.5,0.5,      0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+			-0.5, 0.5, -0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
+
+			-0.5, -0.5,0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0,  1.0,-1.0,1.0,
+			0.5, -0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
+			-0.5, 0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
+
+			0.5, 0.5,0.5,   1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
+			-0.5, 0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
+			0.5, -0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0,  1.0,-1.0,-1.0,  // 정사면체
 		]
 
 		var vertexData = [
-			1.5, -0.5, 0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0, 1.0,1.0,1.0,
-			2.5, -0.5, -0.5,   1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
-			2.5, 0.5,0.5,      1.0, 0.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,1.0,
-
-			1.5, -0.5, 0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-			2.5, 0.5,0.5,      0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-			1.5, 0.5, -0.5,   0.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,1.0,-1.0,
-
-			1.5, -0.5,0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0,  1.0,-1.0,1.0,
-			2.5, -0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
-			1.5, 0.5,-0.5,   1.0, 0.0, 1.0, 0.5, 0.0,1.0, 1.0,-1.0,1.0,
-
-			2.5, 0.5,0.5,   1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
-			1.5, 0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0,1.0,  1.0,-1.0,-1.0,
-			2.5, -0.5,-0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0,  1.0,-1.0,-1.0,
-
 
 			-0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0, //3
 			0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 0.5, 1.0, 1.0, 0.0, 1.0, 0.0, //1
@@ -301,8 +333,14 @@ function initialiseBuffer() {
 	gl.vertexBuffer = gl.createBuffer();
 	// Bind buffer as a vertex buffer so we can fill it with data
 	gl.bindBuffer(gl.ARRAY_BUFFER, gl.vertexBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
-	//gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData2), gl.STATIC_DRAW);
+	if(shapebit == 1){
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData2), gl.STATIC_DRAW);
+
+	}
+	else{
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
+
+	}
 	return testGLError("initialiseBuffers");
 }
 
@@ -577,7 +615,20 @@ function trXinc() {
 	document.getElementById("webTrX").innerHTML = "transX : " + transX.toFixed(4);
 }
 
-function renderScene() {
+function requireControl(){
+
+	if(shapebit == 1 &&lock ==0){
+		if (!initialiseBuffer()) {
+			return;
+		}
+		lock = 1;
+	}
+	else if(shapebit ==0 && lock == 1){
+		if (!initialiseBuffer()) {
+			return;
+		}
+		lock =0;
+	}
 
 	if (zoombit != 5) {
 		view_matrix[14] = -zoombit;//zoom
@@ -621,10 +672,15 @@ function renderScene() {
 		deletebit = 0;
 	}
 
+}
+
+function renderScene() {
+
+	requireControl();
+
 	//console.log("Frame "+frames+"\n");
 	frames += 1;
 	rotAxis = [1, 1, 0];
-
 
 	var Pmatrix = gl.getUniformLocation(gl.programObject, "Pmatrix");
 	var Vmatrix = gl.getUniformLocation(gl.programObject, "Vmatrix");
@@ -669,9 +725,14 @@ function renderScene() {
 	gl.clearDepth(1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	gl.drawArrays(gl.TRIANGLES, 0, 48);
-//	gl.drawArrays(gl.TRIANGLES, 0, 36);
+	if(shapedraw == 1){
+		gl.drawArrays(gl.TRIANGLES, 0, 12);
 
+	}
+	else if(shapedraw == 0){
+		gl.drawArrays(gl.TRIANGLES, 0, 36);
+
+	}
 
 	/*
 	var mov_matrix2 = mov_matrix.slice();
