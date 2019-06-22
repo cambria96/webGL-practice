@@ -35,9 +35,9 @@
 			</li>
 
 			<li>
-				<a onclick="ZBuffer.style.display=(ZBuffer.style.display=='none')?'block':'none';"
+				<a onclick="Viewing.style.display=(Viewing.style.display=='none')?'block':'none';"
 					href="javascript:void(0)">
-					<big>Z-Buffering</big>
+					<big>Viewing</big>
 				</a>
 			</li>
 		</ul>
@@ -46,7 +46,8 @@
 			<br><br>
 			<t>
 				Geometric data such as vertex positions and normal vectors are transformed via Vertex Operation <br>
-				and Primitive Assembly operation in OpenGL pipeline before raterization process.
+				and Primitive Assembly operation in OpenGL pipeline before raterization process.<br>
+				In this chapter, you can learn about translation and rotation.
 			</t><br>
 			<img src="pipeline.png"><br><br>
 
@@ -54,7 +55,8 @@
 			<button id="trans" onclick="clickbutton(translation)">Source Code</button>
 
 			<p>
-				A translation moves a vector a certain distance in a certain direction.
+				A translation moves a vector a certain distance in a certain direction.<br>
+				You can translate square who you want. Canvas size was set 2X2.<br>
 			</p>
 			<img src="translate.png"><br><br>
 
@@ -67,22 +69,21 @@
 			<button onclick="submitTrans(xTranslate.value, yTranslate.value, zTranslate.value)">Translate!</button>
 			<button onclick="resetTrans()">Reset</button><br><br>
 
-			<big><b>Rotation</b></big>&nbsp;&nbsp;
+			<big><b>Axis Rotation</b></big>&nbsp;&nbsp;
 			<button id="rotation" onclick="clickbutton(rotate)">Source Code</button>
 
 
 			<p>
-				A rotation transformation rotates a vector around the origin (0,0,0) using a given axis and angle.
+				A rotation transformation rotates a vector around the origin (0,0,0) using a given axis and angle.<br>
+				X rotate set axis to (1,0,0), Y rotate set axis to (0,1,0), Z rotate set axis to (0,0,1)<br>
+				Axis rotate value was set to (1,1,0).<br>
 			</p>
-			<img src="rotate.png"><br><br>
+			<img src="xrotate.png"><img src="yrotate.png"><img src="zrotate.png"><br><br>
 
 			<button onclick="rotateShape(1)">X Rotate Speed + 0.01</button>
 			<button onclick="rotateShape(2)">Y Rotate Speed + 0.01</button>
 			<button onclick="rotateShape(3)">Z Rotate Speed + 0.01</button>
 			<button onclick="rotateShape(4)">Axis Rotate Speed + 0.01</button>
-
-
-
 			<button onclick="stopRotate()">Stop Rotate</button>
 
 
@@ -106,7 +107,9 @@
 				GL_REPEAT: The integer part of the coordinate will be ignored and a repeating pattern is formed.<br>
 				GL_MIRRORED_REPEAT: The texture will also be repeated, but it will be mirrored when the integer part of
 				the coordinate is odd.<br>
-				GL_CLAMP_TO_EDGE: The coordinate will simply be clamped between 0 and 1.
+				GL_CLAMP_TO_EDGE: The coordinate will simply be clamped between 0 and 1. <br><br>
+
+				To show texture change, you should select Texture_Wrap style first.
 			</p>
 
 			<input type="radio" name="radio_answer" value="1" oninput="Wrapping(this.value)" />
@@ -122,21 +125,56 @@
 
 		</div>
 		<br>
-		<div style="DISPLAY: none" id="ZBuffer">
+		<div style="DISPLAY: none" id="Viewing">
 
+			<big><b>Camera Viewing</b></big>&nbsp;&nbsp;
+			<button id="Cam" onclick="clickbutton(camera)">Source Code</button>
+
+			<p>
+				
+					OpenGL transforms the entire scene inversely to a space, where a fixed camera is<br> 
+					at the origin (0,0,0) and always looking along -Z axis. <br>
+					The difference between vertex translation and camera translation is that vertex translation<br>
+					is changing vertex's position and camera tranlation is changing my position not vertex's posigion.<br>
+					So when you rotate translated vertex, the vertex will not rotate in the center of canvas. <br>
+					But if the camera location is changed, when you rotate vertex, the vertex will rotate<br>
+					in the center of canvas. It's just because the camera's location has changed.<br><br>
+
+					You can show this difference in this chapter and transformation chapter.<br>
+			</p>
+
+			<img src="cameraviewing.png"><br><br>
+
+			
+
+
+			<t id="xview"> view x : 0 </t>
+			&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			<t id="yview"> view y : 0 </t><br>
+
+			<input type="range" value="0" min="-250" max="250" oninput="xviewValue(this.value)">
+			<input type="range" value="0" min="-250" max="250" oninput="yviewValue(this.value)">
+			<br><br>
+
+			<big><b>Perspective Projection</b></big>&nbsp;&nbsp;
+			<button id="Proj" onclick="clickbutton(pprojection)">Source Code</button>
+			<br><br>
 			<t>
-				z-buffering, also known as depth buffering, is the management of image depth coordinates in 3D
-				graphics,<br>
-				In a 3d-rendering engine, when an object is projected on the screen,<br>
-				the depth (z-value) of a generated pixel in the projected screen image is stored in a buffer (the<br>
-				z-buffer or depth buffer).<br>
-				A z-value is the measure of the perpendicular distance from a pixel on the projection plane to its<br>
-				corresponding 3d-coordinate on a polygon in world-space.<br>
-				When viewing an image containing partially or fully overlapping opaque objects or surfaces,<br>
-				it is not possible to fully see those objects that are furthest away from the viewer and behind
-				other<br>
-				objects
-			</t><br><br>
+				It also means that lines which are parallel in nature (that is, meet at the point at infinity) <br>
+				appear to intersect in the projected image, for example if railways are pictured with perspective <br>
+				projection, they appear to converge towards a single point, called the vanishing point. <br>
+				Photographic lenses and the human eye work in the same way, therefore perspective projection looks most realistic.<br><br>
+				
+				Clipping planes let you exclude some of a scene's geometry and view or render only certain portions of the scene.<br>
+				Each camera object has a near and a far clipping plane. Objects closer than the near clipping plane or farther <br>
+				than the far clipping plane are invisible to the camera. <br>
+				Clipping planes are useful for rendering selected portions of a scene that has a lot of complex geometry. <br><br>
+
+				In this chapter, you can set far clipping plane by controlling projection.<br>
+				If vertex is out of far clipping plane, the part is not displayed.<br>
+			</t><br>
+
+			<img src="viewtransform.png"><br><br>
 
 			<t id="zoom"> Zoom in/out : 5 </t>&nbsp&nbsp
 			<t id="projection"> projection : 7</t><br>
@@ -177,6 +215,212 @@
 
 	<!-- Source Code Section Using Modal -->
 	<!-- Modal content -->
+	<div id="translation" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="clickspan(translation)">&times;</span>
+			<pre>
+// multiplication function
+function translate(m, tx, ty, tz) {
+	var tm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+	tm[12] = tx; tm[13] = ty; tm[14] = tz;
+	multiply$3(m, m,tm);
+}
+				
+
+-----------------------------------------------------------------------------------------
+// renderscene		
+var Pmatrix = gl.getUniformLocation(gl.programObject, "Pmatrix");
+var Vmatrix = gl.getUniformLocation(gl.programObject, "Vmatrix");
+var Mmatrix = gl.getUniformLocation(gl.programObject, "Mmatrix");
+
+idMatrix(mov_matrix); // create matrix
+translate(mov_matrix, transX, transY, transZ);
+gl.uniformMatrix4fv(Mmatrix, false, mov_matrix);
+-----------------------------------------------------------------------------------------
+// vertex shader
+var vertexShaderSource = '\
+	attribute highp vec3 myVertex; \
+	attribute highp vec4 myColor; \
+	uniform mediump mat4 Pmatrix; \
+	uniform mediump mat4 Vmatrix; \
+	uniform mediump mat4 Mmatrix; \
+	varying mediump vec4 color; \
+	void main(void)  \
+	{ \
+		gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(myVertex, 1.0);\
+		color = myColor;\
+	}';
+
+gl.vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(gl.vertexShader, vertexShaderSource);
+gl.compileShader(gl.vertexShader);
+			</pre>
+		</div>
+	</div>
+
+	<div id="rotate" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="clickspan(rotate)">&times;</span>
+			<pre>
+// Rotates a matrix by the given angle around the X axis
+function rotateX(out, a, rad) {
+    var s = Math.sin(rad);
+    var c = Math.cos(rad);
+    var a10 = a[4];
+    var a11 = a[5];
+    var a12 = a[6];
+    var a13 = a[7];
+    var a20 = a[8];
+    var a21 = a[9];
+    var a22 = a[10];
+    var a23 = a[11];
+
+    if (a !== out) {
+      // If the source and destination differ, copy the unchanged rows
+      out[0] = a[0];
+      out[1] = a[1];
+      out[2] = a[2];
+      out[3] = a[3];
+      out[12] = a[12];
+      out[13] = a[13];
+      out[14] = a[14];
+      out[15] = a[15];
+    } // Perform axis-specific matrix multiplication
+
+    out[4] = a10 * c + a20 * s;
+    out[5] = a11 * c + a21 * s;
+    out[6] = a12 * c + a22 * s;
+    out[7] = a13 * c + a23 * s;
+    out[8] = a20 * c - a10 * s;
+    out[9] = a21 * c - a11 * s;
+    out[10] = a22 * c - a12 * s;
+    out[11] = a23 * c - a13 * s;
+    return out;
+  }
+
+// Rotates a matrix by the given angle around the Y axis
+function rotateY(out, a, rad) {
+    var s = Math.sin(rad);
+    var c = Math.cos(rad);
+    var a00 = a[0];
+    var a01 = a[1];
+    var a02 = a[2];
+    var a03 = a[3];
+    var a20 = a[8];
+    var a21 = a[9];
+    var a22 = a[10];
+    var a23 = a[11];
+
+    if (a !== out) {
+      // If the source and destination differ, copy the unchanged rows
+      out[4] = a[4];
+      out[5] = a[5];
+      out[6] = a[6];
+      out[7] = a[7];
+      out[12] = a[12];
+      out[13] = a[13];
+      out[14] = a[14];
+      out[15] = a[15];
+    } // Perform axis-specific matrix multiplication
+
+
+    out[0] = a00 * c - a20 * s;
+    out[1] = a01 * c - a21 * s;
+    out[2] = a02 * c - a22 * s;
+    out[3] = a03 * c - a23 * s;
+    out[8] = a00 * s + a20 * c;
+    out[9] = a01 * s + a21 * c;
+    out[10] = a02 * s + a22 * c;
+    out[11] = a03 * s + a23 * c;
+    return out;
+  }
+
+// Rotates a matrix by the given angle around the Z axis
+function rotateZ(out, a, rad) {
+	var s = Math.sin(rad);
+	var c = Math.cos(rad);
+	var a00 = a[0];
+	var a01 = a[1];
+	var a02 = a[2];
+	var a03 = a[3];
+	var a10 = a[4];
+	var a11 = a[5];
+	var a12 = a[6];
+	var a13 = a[7];
+  
+	if (a !== out) {
+		// If the source and destination differ, copy the unchanged last row
+		out[8] = a[8];
+		out[9] = a[9];
+		out[10] = a[10];
+		out[11] = a[11];
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+	} // Perform axis-specific matrix multiplication
+  
+  
+	out[0] = a00 * c + a10 * s;
+	out[1] = a01 * c + a11 * s;
+	out[2] = a02 * c + a12 * s;
+	out[3] = a03 * c + a13 * s;
+	out[4] = a10 * c - a00 * s;
+	out[5] = a11 * c - a01 * s;
+	out[6] = a12 * c - a02 * s;
+	out[7] = a13 * c - a03 * s;
+	return out;
+  }
+  
+  function normalizeVec3(v) {
+	  sq = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+	  sq = Math.sqrt(sq);
+	  if (sq < 0.000001) // Too Small
+		  return -1;
+	  v[0] /= sq; v[1] /= sq; v[2] /= sq;
+  }
+
+// Rotates a matrix by the given angle around the pivot axis
+function rotateArbAxis(m, axis,angle) {
+	var axis_rot = [0, 0, 0];
+	var ux, uy, uz;
+	var rm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+	var c = Math.cos(angle);
+	var c1 = 1.0 - c;
+	var s = Math.sin(angle);
+	axis_rot[0] = axis[0];
+	axis_rot[1] = axis[1];
+	axis_rot[2] = axis[2];
+	if (normalizeVec3(axis_rot) == -1)
+		return -1;
+	ux = axis_rot[0]; uy = axis_rot[1]; uz = axis_rot[2];
+	rm[0] = c + ux * ux * c1;
+	rm[1] = uy * ux * c1 + uz * s;
+	rm[2] = uz * ux * c1 - uy * s;
+	rm[3] = 0;
+
+	rm[4] = ux * uy * c1 - uz * s;
+	rm[5] = c + uy * uy * c1;
+	rm[6] = uz * uy * c1 + ux * s;
+	rm[7] = 0;
+
+	rm[8] = ux * uz * c1 + uy * s;
+	rm[9] = uy * uz * c1 - ux * s;
+	rm[10] = c + uz * uz * c1;
+	rm[11] = 0;
+
+	rm[12] = 0;
+	rm[13] = 0;
+	rm[14] = 0;
+	rm[15] = 1;
+
+	multiply$3(m,m,rm);
+}	
+
+				</pre>
+		</div>
+	</div>
+
 	<div id="textureMapping" class="modal">
 		<div class="modal-content">
 			<span class="close" onclick="clickspan(textureMapping)">&times;</span>
@@ -223,30 +467,54 @@ void main(void) \
 		</pre>
 		</div>
 	</div>
+	
+	<div id="camera" class="modal">
+			<div class="modal-content">
+				<span class="close" onclick="clickspan(camera)">&times;</span>
+				<pre>
+	
+	
+			</pre>
+			</div>
+		</div>
+	<div id="pprojection" class="modal">
+			<div class="modal-content">
+				<span class="close" onclick="clickspan(pprojection)">&times;</span>
+				<pre>
 
-	<div id="translation" class="modal">
-		<div class="modal-content">
-			<span class="close" onclick="clickspan(translation)">&times;</span>
-			<pre>
-// multiplication function
-function translate(m, tx, ty, tz) {
-	var tm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-	tm[12] = tx; tm[13] = ty; tm[14] = tz;
-	mulMatrix(m, tm);
-}
-				
+// Setting proj_matrix function
+function get_projection(angle, a, zMin, zMax) {
+	var ang = Math.tan((angle * .5) * Math.PI / 180);//angle*.5
+	return [
+		0.5 / ang, 0, 0, 0,
+		0, 0.5 * a / ang, 0, 0,
+		0, 0, -(zMax + zMin) / (zMax - zMin), -1,
+		0, 0, (-2 * zMax * zMin) / (zMax - zMin), 0];
+	}		
+	
+-----------------------------------------------------------------------------------------	
+
+// When view_matrix[14] value is changed, you should initialize vertex shaders.
+if (zoombit != 5) { // default zoom value = 5
+	view_matrix[14] = -zoombit;//zoom
+	if (!initialiseShaders()) {
+		return;
+	}
+	zoombit = 5;
+
+// When proj_matrix value is changed, you should initialize vertex shaders.
+if (projectionbit != 7) { // default projection value = 7
+	proj_matrix = get_projection(30, 1.0, 1, projectionbit); // set z-buffer 
+	if (!initialiseShaders()) {
+		return;
+	}
+	projectionbit = 7;
+	}	
 
 -----------------------------------------------------------------------------------------
-// renderscene		
-var Pmatrix = gl.getUniformLocation(gl.programObject, "Pmatrix");
-var Vmatrix = gl.getUniformLocation(gl.programObject, "Vmatrix");
-var Mmatrix = gl.getUniformLocation(gl.programObject, "Mmatrix");
 
-idMatrix(mov_matrix); // create matrix
-translate(mov_matrix, transX, transY, transZ);
-gl.uniformMatrix4fv(Mmatrix, false, mov_matrix);
------------------------------------------------------------------------------------------
 // vertex shader
+// With view_matrix and proj_matrix, gl_postion has new value using homogenous coordinate.
 var vertexShaderSource = '\
 	attribute highp vec3 myVertex; \
 	attribute highp vec4 myColor; \
@@ -259,22 +527,12 @@ var vertexShaderSource = '\
 		gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(myVertex, 1.0);\
 		color = myColor;\
 	}';
-
+	
 gl.vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(gl.vertexShader, vertexShaderSource);
-gl.compileShader(gl.vertexShader);
+gl.compileShader(gl.vertexShader);	
+}
 			</pre>
-		</div>
-	</div>
-
-	<div id="rotate" class="modal">
-			<div class="modal-content">
-				<span class="close" onclick="clickspan(rotate)">&times;</span>
-				<pre>
-
-
-	
-				</pre>
 			</div>
 		</div>
 

@@ -46,6 +46,7 @@ function clickspan(modal) {
 // When the user clicks on Translate! button, translate vertex.
 function submitTrans(x, y, z) {
 
+
 	x *= 1;
 	y *= 1;
 	z *= 1;
@@ -55,6 +56,7 @@ function submitTrans(x, y, z) {
 	document.getElementById("webTrX").innerHTML = "translate (" + transX.toFixed(1) + "," + transY.toFixed(1) + "," + transZ.toFixed(1) + ")";
 
 }
+
 
 // When the user clicks on reset, set translate (0,0,0)
 function resetTrans() {
@@ -66,33 +68,17 @@ function resetTrans() {
 }
 
 // When the user clicks on rotate, control rotate type.
-function rotateShape(rotatetype){
+function rotateShape(rotatetype) {
 
 
-	if(rotatebit == rotatetype){
+	if (rotatebit == rotatetype) {
 		incRotValue += 0.01;
 	}
-	else{
+	else {
 		incRotValue = 0.01;
 
 	}
 	rotatebit = rotatetype;
-}
-
-// processing range value of zoom
-function zoomValue(value) {
-
-	zoombit = value / 100;
-	document.getElementById("zoom").innerHTML = "Zoom in/out : " + zoombit;
-	//console.log(math.toRadian(value));
-
-}
-
-// processing range value of zoom
-function projectionValue(value) {
-
-	projectionbit = value / 100;
-	document.getElementById("projection").innerHTML = "projection : " + projectionbit;
 }
 
 function insertImage() {
@@ -132,6 +118,38 @@ function deleteImage() {
 	deletebit = 1;
 }
 
+function xviewValue(value){
+
+	viewbit = value;
+	xview = value/100;
+	document.getElementById("xview").innerHTML = "view x : " + xview;
+
+}
+
+function yviewValue(value){
+
+	viewbit = value;
+	yview = value/100;
+	document.getElementById("yview").innerHTML = "view y : " + yview;
+
+}
+
+// processing range value of zoom
+function zoomValue(value) {
+
+	zoombit = value / 100;
+	document.getElementById("zoom").innerHTML = "Zoom in/out : " + zoombit;
+
+}
+
+// processing range value of zoom
+function projectionValue(value) {
+
+	projectionbit = value / 100;
+	document.getElementById("projection").innerHTML = "projection : " + projectionbit;
+}
+
+
 function changetoTetrahedron() {
 
 	shapebit = 1;
@@ -167,21 +185,23 @@ function Wrapping(value) {
 	}
 }
 var shaderProgram;
-var rotatebit =0; // xrotate : 1, yrotate : 2, zrotate : 3, axisrotate :4;
+var rotatebit = 0; // xrotate : 1, yrotate : 2, zrotate : 3, axisrotate :4;
 var imagebit = 0; 	//input : 1 delete : 0
 var inputbit = 0;	//inputimage : 1
 var repeatbit = 0;	//deleteimage : 1
 var clampbit = 0; 	//clampimage : 1
 var mirrorbit = 0;	//mirrorimage : 1
 var deletebit = 0;	//deleteimage : 1
-var zoombit = 5;    //zoomsize 2.5~7.5 
+var zoombit = 5;    //zoomsize 2.5~7.5 ==zview
 var projectionbit = 7; //zMax 4~10
 var wrapT = 1; // gl.TEXTURE_WRAP_T : 1
 var wrapS = 1; // gl.TEXTURE_WRAP_S : 1
 var shapebit = -1; // cube : 0 tetrahedron : 1 when initialize buffer
 var shapedraw = 0; // cube : 0 tetrahedron : 1 when drawarrays
 var lock = 0; // when change shape, only one time  initialize buffer
-
+var viewbit = 0;
+var xview = 0;
+var yview = 0;
 
 function initialiseBuffer() {
 
@@ -501,87 +521,202 @@ var view_matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 // translating z
 view_matrix[14] = view_matrix[14] - 5//zoom
 
-function idMatrix(m) {
-	m[0] = 1; m[1] = 0; m[2] = 0; m[3] = 0;
-	m[4] = 0; m[5] = 1; m[6] = 0; m[7] = 0;
-	m[8] = 0; m[9] = 0; m[10] = 1; m[11] = 0;
-	m[12] = 0; m[13] = 0; m[14] = 0; m[15] = 1;
+//Creates a new identity mat4
+var ARRAY_TYPE = typeof Float32Array !== 'undefined' ? Float32Array : Array;
+function create$3() {
+	var out = new ARRAY_TYPE(16);
+
+	if (ARRAY_TYPE != Float32Array) {
+		out[1] = 0;
+		out[2] = 0;
+		out[3] = 0;
+		out[4] = 0;
+		out[6] = 0;
+		out[7] = 0;
+		out[8] = 0;
+		out[9] = 0;
+		out[11] = 0;
+		out[12] = 0;
+		out[13] = 0;
+		out[14] = 0;
+	}
+
+	out[0] = 1;
+	out[5] = 1;
+	out[10] = 1;
+	out[15] = 1;
+	return out;
 }
 
-function mulStoreMatrix(r, m, k) {
-	m0 = m[0]; m1 = m[1]; m2 = m[2]; m3 = m[3]; m4 = m[4]; m5 = m[5]; m6 = m[6]; m7 = m[7];
-	m8 = m[8]; m9 = m[9]; m10 = m[10]; m11 = m[11]; m12 = m[12]; m13 = m[13]; m14 = m[14]; m15 = m[15];
-	k0 = k[0]; k1 = k[1]; k2 = k[2]; k3 = k[3]; k4 = k[4]; k5 = k[5]; k6 = k[6]; k7 = k[7];
-	k8 = k[8]; k9 = k[9]; k10 = k[10]; k11 = k[11]; k12 = k[12]; k13 = k[13]; k14 = k[14]; k15 = k[15];
+//  Multiplies two mat4s 
+function multiply$3(out, a, b) {
+	var a00 = a[0],
+		a01 = a[1],
+		a02 = a[2],
+		a03 = a[3];
+	var a10 = a[4],
+		a11 = a[5],
+		a12 = a[6],
+		a13 = a[7];
+	var a20 = a[8],
+		a21 = a[9],
+		a22 = a[10],
+		a23 = a[11];
+	var a30 = a[12],
+		a31 = a[13],
+		a32 = a[14],
+		a33 = a[15]; // Cache only the current line of the second matrix
 
-	a0 = k0 * m0 + k3 * m12 + k1 * m4 + k2 * m8;
-	a4 = k4 * m0 + k7 * m12 + k5 * m4 + k6 * m8;
-	a8 = k8 * m0 + k11 * m12 + k9 * m4 + k10 * m8;
-	a12 = k12 * m0 + k15 * m12 + k13 * m4 + k14 * m8;
-
-	a1 = k0 * m1 + k3 * m13 + k1 * m5 + k2 * m9;
-	a5 = k4 * m1 + k7 * m13 + k5 * m5 + k6 * m9;
-	a9 = k8 * m1 + k11 * m13 + k9 * m5 + k10 * m9;
-	a13 = k12 * m1 + k15 * m13 + k13 * m5 + k14 * m9;
-
-	a2 = k2 * m10 + k3 * m14 + k0 * m2 + k1 * m6;
-	a6 = k6 * m10 + k7 * m14 + k4 * m2 + k5 * m6;
-	a10 = k10 * m10 + k11 * m14 + k8 * m2 + k9 * m6;
-	a14 = k14 * m10 + k15 * m14 + k12 * m2 + k13 * m6;
-
-	a3 = k2 * m11 + k3 * m15 + k0 * m3 + k1 * m7;
-	a7 = k6 * m11 + k7 * m15 + k4 * m3 + k5 * m7;
-	a11 = k10 * m11 + k11 * m15 + k8 * m3 + k9 * m7;
-	a15 = k14 * m11 + k15 * m15 + k12 * m3 + k13 * m7;
-
-	r[0] = a0; r[1] = a1; r[2] = a2; r[3] = a3; r[4] = a4; r[5] = a5; r[6] = a6; r[7] = a7;
-	r[8] = a8; r[9] = a9; r[10] = a10; r[11] = a11; r[12] = a12; r[13] = a13; r[14] = a14; r[15] = a15;
-}
-
-function mulMatrix(m, k) {
-	mulStoreMatrix(m, m, k);
+	var b0 = b[0],
+		b1 = b[1],
+		b2 = b[2],
+		b3 = b[3];
+	out[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+	out[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+	out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+	out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+	b0 = b[4];
+	b1 = b[5];
+	b2 = b[6];
+	b3 = b[7];
+	out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+	out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+	out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+	out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+	b0 = b[8];
+	b1 = b[9];
+	b2 = b[10];
+	b3 = b[11];
+	out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+	out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+	out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+	out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+	b0 = b[12];
+	b1 = b[13];
+	b2 = b[14];
+	b3 = b[15];
+	out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+	out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+	out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+	out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+	return out;
 }
 
 function translate(m, tx, ty, tz) {
 	var tm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 	tm[12] = tx; tm[13] = ty; tm[14] = tz;
-	mulMatrix(m, tm);
+	multiply$3(m, m, tm);
 }
 
+// Rotates a matrix by the given angle around the X axis
+function rotateX(out, a, rad) {
+	var s = Math.sin(rad);
+	var c = Math.cos(rad);
+	var a10 = a[4];
+	var a11 = a[5];
+	var a12 = a[6];
+	var a13 = a[7];
+	var a20 = a[8];
+	var a21 = a[9];
+	var a22 = a[10];
+	var a23 = a[11];
 
-function rotateX(m, angle) {
-	var rm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-	var c = Math.cos(angle);
-	var s = Math.sin(angle);
+	if (a !== out) {
+		// If the source and destination differ, copy the unchanged rows
+		out[0] = a[0];
+		out[1] = a[1];
+		out[2] = a[2];
+		out[3] = a[3];
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+	} // Perform axis-specific matrix multiplication
 
-	rm[5] = c; rm[6] = s;
-	rm[9] = -s; rm[10] = c;
-	mulMatrix(m, rm);
+
+	out[4] = a10 * c + a20 * s;
+	out[5] = a11 * c + a21 * s;
+	out[6] = a12 * c + a22 * s;
+	out[7] = a13 * c + a23 * s;
+	out[8] = a20 * c - a10 * s;
+	out[9] = a21 * c - a11 * s;
+	out[10] = a22 * c - a12 * s;
+	out[11] = a23 * c - a13 * s;
+	return out;
 }
 
-function rotateY(m, angle) {
-	var rm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-	var c = Math.cos(angle);
-	var s = Math.sin(angle);
+// Rotates a matrix by the given angle around the Y axis
+function rotateY(out, a, rad) {
+	var s = Math.sin(rad);
+	var c = Math.cos(rad);
+	var a00 = a[0];
+	var a01 = a[1];
+	var a02 = a[2];
+	var a03 = a[3];
+	var a20 = a[8];
+	var a21 = a[9];
+	var a22 = a[10];
+	var a23 = a[11];
 
-	rm[0] = c; rm[2] = -s;
-	rm[8] = s; rm[10] = c;
-	mulMatrix(m, rm);
+	if (a !== out) {
+		// If the source and destination differ, copy the unchanged rows
+		out[4] = a[4];
+		out[5] = a[5];
+		out[6] = a[6];
+		out[7] = a[7];
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+	} // Perform axis-specific matrix multiplication
+
+
+	out[0] = a00 * c - a20 * s;
+	out[1] = a01 * c - a21 * s;
+	out[2] = a02 * c - a22 * s;
+	out[3] = a03 * c - a23 * s;
+	out[8] = a00 * s + a20 * c;
+	out[9] = a01 * s + a21 * c;
+	out[10] = a02 * s + a22 * c;
+	out[11] = a03 * s + a23 * c;
+	return out;
 }
 
-function rotateZ(m, angle) {
-	var rm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-	var c = Math.cos(angle);
-	var s = Math.sin(angle);
+// Rotates a matrix by the given angle around the Z axis
+function rotateZ(out, a, rad) {
+	var s = Math.sin(rad);
+	var c = Math.cos(rad);
+	var a00 = a[0];
+	var a01 = a[1];
+	var a02 = a[2];
+	var a03 = a[3];
+	var a10 = a[4];
+	var a11 = a[5];
+	var a12 = a[6];
+	var a13 = a[7];
 
-	rm[0] = c; rm[1] = s;
-	rm[4] = -s; rm[5] = c;
-	mulMatrix(m, rm);
-}
+	if (a !== out) {
+		// If the source and destination differ, copy the unchanged last row
+		out[8] = a[8];
+		out[9] = a[9];
+		out[10] = a[10];
+		out[11] = a[11];
+		out[12] = a[12];
+		out[13] = a[13];
+		out[14] = a[14];
+		out[15] = a[15];
+	} // Perform axis-specific matrix multiplication
 
-function scale(m, sx, sy, sz) {
-	var rm = [sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, 0, 0, 0, 1];
-	mulMatrix(m, rm);
+
+	out[0] = a00 * c + a10 * s;
+	out[1] = a01 * c + a11 * s;
+	out[2] = a02 * c + a12 * s;
+	out[3] = a03 * c + a13 * s;
+	out[4] = a10 * c - a00 * s;
+	out[5] = a11 * c - a01 * s;
+	out[6] = a12 * c - a02 * s;
+	out[7] = a13 * c - a03 * s;
+	return out;
 }
 
 function normalizeVec3(v) {
@@ -592,7 +727,7 @@ function normalizeVec3(v) {
 	v[0] /= sq; v[1] /= sq; v[2] /= sq;
 }
 
-function rotateArbAxis(m, angle, axis) {
+function rotateArbAxis(m, axis, angle) {
 	var axis_rot = [0, 0, 0];
 	var ux, uy, uz;
 	var rm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -605,7 +740,6 @@ function rotateArbAxis(m, angle, axis) {
 	if (normalizeVec3(axis_rot) == -1)
 		return -1;
 	ux = axis_rot[0]; uy = axis_rot[1]; uz = axis_rot[2];
-	//console.log("Log", angle);
 	rm[0] = c + ux * ux * c1;
 	rm[1] = uy * ux * c1 + uz * s;
 	rm[2] = uz * ux * c1 - uy * s;
@@ -626,7 +760,7 @@ function rotateArbAxis(m, angle, axis) {
 	rm[14] = 0;
 	rm[15] = 1;
 
-	mulMatrix(m, rm);
+	multiply$3(m, m, rm);
 }
 
 rotValue = 0.0;
@@ -667,6 +801,20 @@ function requireControl() {
 			return;
 		}
 		lock = 0;
+	}
+
+	if (viewbit != 0){
+
+		console.log(view_matrix[12],view_matrix[13],view_matrix[14]);
+
+		view_matrix[12] = xview;
+		view_matrix[13] = yview;
+
+		if (!initialiseShaders()) {
+			return;
+		}
+		viewbit = 0 ;
+
 	}
 
 	if (zoombit != 5) {
@@ -711,24 +859,25 @@ function requireControl() {
 		deletebit = 0;
 	}
 
-	idMatrix(mov_matrix);
+	mov_matrix = create$3();
 	frames += 1;
-	rotAxis = [1, 1, 0];
+	
+	rotAxis = [1,1,0];
 
+	switch (rotatebit) {
 
-	switch(rotatebit){
+		case 1: rotateX(mov_matrix, mov_matrix, rotValue);
+			break;
 
-		case 1 : 	rotateX(mov_matrix,rotValue);
-		break;
+		case 2: rotateY(mov_matrix, mov_matrix, rotValue);
+			break;
 
-		case 2 : 	rotateY(mov_matrix,rotValue);
-		break;
+		case 3: rotateZ(mov_matrix, mov_matrix, rotValue);
+			break;
 
-		case 3 : 	rotateZ(mov_matrix,rotValue);
-		break;
-
-		case 4 : 	rotateArbAxis(mov_matrix, rotValue, rotAxis);
-		break;
+		case 4:
+			 rotateArbAxis(mov_matrix, rotAxis, rotValue);
+			break;
 	}
 
 }
@@ -736,12 +885,12 @@ function requireControl() {
 function renderScene() {
 
 	requireControl();
-	
+
 	var Pmatrix = gl.getUniformLocation(gl.programObject, "Pmatrix");
 	var Vmatrix = gl.getUniformLocation(gl.programObject, "Vmatrix");
 	var Mmatrix = gl.getUniformLocation(gl.programObject, "Mmatrix");
 	var Nmatrix = gl.getUniformLocation(gl.programObject, "Nmatrix");
-	
+
 	rotValue += incRotValue;
 	rotValueSmall += incRotValueSmall;
 	translate(mov_matrix, transX, transY, transZ);
@@ -828,7 +977,6 @@ function renderScene() {
 
 function main() {
 	var canvas = document.getElementById("helloapicanvas");
-	console.log("Start");
 
 	if (!initialiseGL(canvas)) {
 		return;
@@ -848,7 +996,6 @@ function main() {
 			//	return window.requestAnimationFrame || window.webkitRequestAnimationFrame 
 			//	|| window.mozRequestAnimationFrame || 
 			return function (callback) {
-				// console.log("Callback is"+callback); 
 				window.setTimeout(callback, 10, 10);
 			};
 		})();
