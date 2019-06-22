@@ -14,19 +14,14 @@
 		welcome to my WebGL!
 	</header>
 
-	
-
-
 	<nav>
-			<div id="floatdiv">
+		<div id="floatdiv">
 
-					<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
-					<button onclick="changetoTetrahedron()">Tetrahedron </button>
-					<button onclick="changetoCube()">Cube </button>&nbsp;
+			<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+			<button onclick="changetoTetrahedron()">Tetrahedron </button>
+			<button onclick="changetoCube()">Cube </button>&nbsp;
 
-			</div>
-
-		
+		</div>
 	</nav>
 
 	<article>
@@ -79,28 +74,28 @@
 			<button onclick="submitTrans(xTranslate.value, yTranslate.value, zTranslate.value)">Translate!</button>
 			<button onclick="resetTrans()">Reset</button><br><br>
 			<table border=1>
-					<tr>
-						<td id="matrix0">
-						<td id="matrix4">
-						<td id="matrix8">
-						<td id="matrix12">
-					<tr>
-						<td id="matrix1">
-						<td id="matrix5">
-						<td id="matrix9">
-						<td id="matrix13">
-					<tr>
-						<td id="matrix2">
-						<td id="matrix6">
-						<td id="matrix10">
-						<td id="matrix14">
-					<tr>
-						<td id="matrix3">
-						<td id="matrix7">
-						<td id="matrix11">
-						<td id="matrix15">
-				</table>
-				<p id="webTrX"> translate (0.0,0.0,0.0) </p>
+				<tr>
+					<td id="matrix0">
+					<td id="matrix4">
+					<td id="matrix8">
+					<td id="matrix12">
+				<tr>
+					<td id="matrix1">
+					<td id="matrix5">
+					<td id="matrix9">
+					<td id="matrix13">
+				<tr>
+					<td id="matrix2">
+					<td id="matrix6">
+					<td id="matrix10">
+					<td id="matrix14">
+				<tr>
+					<td id="matrix3">
+					<td id="matrix7">
+					<td id="matrix11">
+					<td id="matrix15">
+			</table>
+			<p id="webTrX"> translate (0.0,0.0,0.0) </p>
 
 
 			<big><b>Axis Rotation</b></big>&nbsp;&nbsp;
@@ -142,7 +137,7 @@
 				the coordinate is odd.<br>
 				GL_CLAMP_TO_EDGE: The coordinate will simply be clamped between 0 and 1. <br><br>
 
-				To show texture change, you should select Texture_Wrap style first.
+				To show texture change, you should select Texture_Wrap type first.
 			</p>
 
 			<input type="radio" name="radio_answer" value="1" oninput="Wrapping(this.value)" />
@@ -164,21 +159,21 @@
 			<button id="Cam" onclick="clickbutton(camera)">Source Code</button>
 
 			<p>
-				
-					OpenGL transforms the entire scene inversely to a space, where a fixed camera is<br> 
-					at the origin (0,0,0) and always looking along -Z axis. <br>
-					The difference between vertex translation and camera translation is that vertex translation<br>
-					is changing vertex's position and camera tranlation is changing my position not vertex's posigion.<br>
-					So when you rotate translated vertex, the vertex will not rotate in the center of canvas. <br>
-					But if the camera location is changed, when you rotate vertex, the vertex will rotate<br>
-					in the center of canvas. It's just because the camera's location has changed.<br><br>
 
-					You can show this difference in this chapter and transformation chapter.<br>
+				OpenGL transforms the entire scene inversely to a space, where a fixed camera is<br>
+				at the origin (0,0,0) and always looking along -Z axis. <br>
+				The difference between vertex translation and camera translation is that vertex translation<br>
+				is changing vertex's position and camera tranlation is changing my position not vertex's posigion.<br>
+				So when you rotate translated vertex, the vertex will not rotate in the center of canvas. <br>
+				But if the camera location is changed, when you rotate vertex, the vertex will rotate<br>
+				in the center of canvas. It's just because the camera's location has changed.<br><br>
+
+				You can show this difference in this chapter and transformation chapter.<br>
 			</p>
 
 			<img src="cameraviewing.png"><br><br>
 
-			
+
 
 
 			<t id="xview"> view x : 0 </t>
@@ -198,7 +193,7 @@
 				projection, they appear to converge towards a single point, called the vanishing point. <br>
 				Photographic lenses and the human eye work in the same way, therefore perspective projection <br>
 				looks most realistic.<br><br>
-				
+
 				Clipping planes let you exclude some of a scene's geometry and view or render only certain<br>
 				portions of the scene. Each camera object has a near and a far clipping plane. Objects <br>
 				closer than the near clipping plane or farther than the far clipping plane are <br>
@@ -477,21 +472,49 @@ void main(void) \
 		</pre>
 		</div>
 	</div>
-	
-	<div id="camera" class="modal">
-			<div class="modal-content">
-				<span class="close" onclick="clickspan(camera)">&times;</span>
-				<pre>
-	
-	
-			</pre>
-			</div>
-		</div>
-	<div id="pprojection" class="modal">
-			<div class="modal-content">
-				<span class="close" onclick="clickspan(pprojection)">&times;</span>
-				<pre>
 
+	<div id="camera" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="clickspan(camera)">&times;</span>
+			<pre>
+// When view_matrix[12] and view_matrix[13] value is changed, initialize vertex shaders.			
+if (viewbit != 0){
+
+		view_matrix[12] = xview;
+		view_matrix[13] = yview;
+		if (!initialiseShaders()) {
+			return;
+		}
+		viewbit = 0 ;
+	}
+-----------------------------------------------------------------------------------------
+
+// vertex shader
+// With view_matrix, gl_postion has new value using homogenous coordinate.
+var vertexShaderSource = '\
+	attribute highp vec3 myVertex; \
+	attribute highp vec4 myColor; \
+	uniform mediump mat4 Pmatrix; \
+	uniform mediump mat4 Vmatrix; \
+	uniform mediump mat4 Mmatrix; \
+	varying mediump vec4 color; \
+	void main(void)  \
+	{ \
+		gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(myVertex, 1.0);\
+		color = myColor;\
+	}';
+	
+gl.vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(gl.vertexShader, vertexShaderSource);
+gl.compileShader(gl.vertexShader);	
+}
+			</pre>
+		</div>
+	</div>
+	<div id="pprojection" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="clickspan(pprojection)">&times;</span>
+			<pre>
 // Setting proj_matrix function
 function get_projection(angle, a, zMin, zMax) {
 	var ang = Math.tan((angle * .5) * Math.PI / 180);//angle*.5
@@ -500,11 +523,10 @@ function get_projection(angle, a, zMin, zMax) {
 		0, 0.5 * a / ang, 0, 0,
 		0, 0, -(zMax + zMin) / (zMax - zMin), -1,
 		0, 0, (-2 * zMax * zMin) / (zMax - zMin), 0];
-	}		
-	
+	}			
 -----------------------------------------------------------------------------------------	
 
-// When view_matrix[14] value is changed, you should initialize vertex shaders.
+// When view_matrix[14] value is changed, initialize vertex shaders.
 if (zoombit != 5) { // default zoom value = 5
 	view_matrix[14] = -zoombit;//zoom
 	if (!initialiseShaders()) {
@@ -512,7 +534,7 @@ if (zoombit != 5) { // default zoom value = 5
 	}
 	zoombit = 5;
 
-// When proj_matrix value is changed, you should initialize vertex shaders.
+// When proj_matrix value is changed,initialize vertex shaders.
 if (projectionbit != 7) { // default projection value = 7
 	proj_matrix = get_projection(30, 1.0, 1, projectionbit); // set z-buffer 
 	if (!initialiseShaders()) {
@@ -520,7 +542,6 @@ if (projectionbit != 7) { // default projection value = 7
 	}
 	projectionbit = 7;
 	}	
-
 -----------------------------------------------------------------------------------------
 
 // vertex shader
@@ -543,9 +564,8 @@ gl.shaderSource(gl.vertexShader, vertexShaderSource);
 gl.compileShader(gl.vertexShader);	
 }
 			</pre>
-			</div>
 		</div>
-
+	</div>
 </body>
 
 </html>

@@ -46,7 +46,6 @@ function clickspan(modal) {
 // When the user clicks on Translate! button, translate vertex.
 function submitTrans(x, y, z) {
 
-
 	x *= 1;
 	y *= 1;
 	z *= 1;
@@ -56,7 +55,6 @@ function submitTrans(x, y, z) {
 	document.getElementById("webTrX").innerHTML = "translate (" + transX.toFixed(1) + "," + transY.toFixed(1) + "," + transZ.toFixed(1) + ")";
 
 }
-
 
 // When the user clicks on reset, set translate (0,0,0)
 function resetTrans() {
@@ -69,8 +67,6 @@ function resetTrans() {
 
 // When the user clicks on rotate, control rotate type.
 function rotateShape(rotatetype) {
-
-
 	if (rotatebit == rotatetype) {
 		incRotValue += 0.01;
 	}
@@ -81,12 +77,14 @@ function rotateShape(rotatetype) {
 	rotatebit = rotatetype;
 }
 
+// When the user clicks input image botton, process event.
 function insertImage() {
 
 	imagebit = 1;
 
 }
 
+// When the user clicks repeat image botton, process event.
 function repeatImage() {
 
 	repeatbit = 1;
@@ -95,6 +93,7 @@ function repeatImage() {
 		alert("Please input image");
 }
 
+// When the user clicks mirror image botton, process event.
 function mirrorImage() {
 
 	repeatbit = 1;
@@ -104,6 +103,7 @@ function mirrorImage() {
 		alert("Please input image");
 }
 
+// When the user clicks clamp to edge image botton, process event.
 function clampImage() {
 
 	repeatbit = 1;
@@ -113,23 +113,26 @@ function clampImage() {
 		alert("Please input image");
 }
 
+// When the user clicks delete image botton, process event.
 function deleteImage() {
 
 	deletebit = 1;
 }
 
-function xviewValue(value){
+// processing range value of xview
+function xviewValue(value) {
 
 	viewbit = value;
-	xview = value/100;
+	xview = value / 100;
 	document.getElementById("xview").innerHTML = "view x : " + xview;
 
 }
 
-function yviewValue(value){
+// processing range value of yview
+function yviewValue(value) {
 
 	viewbit = value;
-	yview = value/100;
+	yview = value / 100;
 	document.getElementById("yview").innerHTML = "view y : " + yview;
 
 }
@@ -149,19 +152,19 @@ function projectionValue(value) {
 	document.getElementById("projection").innerHTML = "projection : " + projectionbit;
 }
 
-
+// change shape to tetrahedron
 function changetoTetrahedron() {
 
 	shapebit = 1;
 	shapedraw = 1;
 }
+
+// change shape to cube
 function changetoCube() {
 
 	shapebit = 0;
 	shapedraw = 0;;
 }
-
-
 
 //select GL_TEXTURE_WRAP
 function Wrapping(value) {
@@ -185,23 +188,29 @@ function Wrapping(value) {
 	}
 }
 var shaderProgram;
+var shapebit = -1; // cube : 0 tetrahedron : 1 when initialize buffer
+var shapedraw = 0; // cube : 0 tetrahedron : 1 when drawarrays
+var lock = 0; // when change shape, only one time  initialize buffer
+
+// Transformaition chapter variable
 var rotatebit = 0; // xrotate : 1, yrotate : 2, zrotate : 3, axisrotate :4;
+
+// Texture Mapping chapter variable
 var imagebit = 0; 	//input : 1 delete : 0
 var inputbit = 0;	//inputimage : 1
+var wrapT = 1; // gl.TEXTURE_WRAP_T : 1
+var wrapS = 1; // gl.TEXTURE_WRAP_S : 1
 var repeatbit = 0;	//deleteimage : 1
 var clampbit = 0; 	//clampimage : 1
 var mirrorbit = 0;	//mirrorimage : 1
 var deletebit = 0;	//deleteimage : 1
-var zoombit = 5;    //zoomsize 2.5~7.5 ==zview
+
+// Viewing chapter variable
+var viewbit = 0; // To process view controlling even
+var xview = 0; // xview size -2.5~2.5
+var yview = 0; // yview size -2.5~2.5
+var zoombit = 5;    //zoomsize 2.5~7.5 == zview
 var projectionbit = 7; //zMax 4~10
-var wrapT = 1; // gl.TEXTURE_WRAP_T : 1
-var wrapS = 1; // gl.TEXTURE_WRAP_S : 1
-var shapebit = -1; // cube : 0 tetrahedron : 1 when initialize buffer
-var shapedraw = 0; // cube : 0 tetrahedron : 1 when drawarrays
-var lock = 0; // when change shape, only one time  initialize buffer
-var viewbit = 0;
-var xview = 0;
-var yview = 0;
 
 function initialiseBuffer() {
 
@@ -241,7 +250,7 @@ function initialiseBuffer() {
 
 			0.5, 0.5, 0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
 			-0.5, 0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
-			0.5, -0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,  // 정사면체
+			0.5, -0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,  // Tetrahedron
 
 		]
 
@@ -257,8 +266,8 @@ function initialiseBuffer() {
 
 			//뒷면
 			0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.5, -1.0, -1.0, 0.0, 0.0, -1.0,	//2
-			0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 2.0, -1.0, 0.0, 0.0, -1.0, 	//6
-			-0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 2.0, 2.0, 0.0, 0.0, -1.0, 		//8 
+			0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 2.0, -1.0, 0.0, 0.0, -1.0, //6
+			-0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 2.0, 2.0, 0.0, 0.0, -1.0, //8 
 
 			-0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.5, -1.0, 2.0, 0.0, 0.0, -1.0, //4
 			0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.5, -1.0, -1.0, 0.0, 0.0, -1.0, //2
@@ -293,11 +302,11 @@ function initialiseBuffer() {
 			0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, -1.0, 0.0, //5
 			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, //7
 
-			-0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, 	//8
+			-0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, //8
 			0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, -1.0, 0.0, 	//6
 			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0,	//7
 		];
-
+		// process bit
 		if (clampbit == 1) {
 			if (wrapS == 1) {
 				gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -335,7 +344,7 @@ function initialiseBuffer() {
 
 			0.5, 0.5, 0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
 			-0.5, 0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,
-			0.5, -0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,  // 정사면체
+			0.5, -0.5, -0.5, 1.0, 1.0, 0.0, 0.5, 0.0, 1.0, 1.0, -1.0, -1.0,  // Tetrahedron
 		]
 
 		var vertexData = [
@@ -350,7 +359,7 @@ function initialiseBuffer() {
 
 			0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0,	//2
 			0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0, -1.0, 	//6
-			-0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 0.0, 0.0, -1.0, 	//8 //뒷면
+			-0.5, -0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 0.0, 0.0, -1.0, //8 
 
 			-0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 0.0, 1.0, 0.0, 0.0, -1.0, //4
 			0.5, 0.5, -0.5, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, -1.0, //2
@@ -374,9 +383,9 @@ function initialiseBuffer() {
 
 			-0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 1.0, 1.0, 0.0, 0.0, 1.0, //7
 			0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0,  //5
-			0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 1.0,  //1 // 앞면
+			0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 1.0,  //1 
 
-			-0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 1.0, 1.0, 0.0, 0.0, 1.0,   //7
+			-0.5, -0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 1.0, 1.0, 0.0, 0.0, 1.0,  //7
 			0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 1.0,	 //1
 			-0.5, 0.5, 0.5, 0.0, 0.0, 1.0, 0.5, 1.0, 0.0, 0.0, 0.0, 1.0,  //3
 
@@ -384,9 +393,9 @@ function initialiseBuffer() {
 			0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, -1.0, 0.0, //5
 			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, //7
 
-			-0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, 	//8
+			-0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0, //8
 			0.5, -0.5, -0.5, 0.0, 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, -1.0, 0.0, 	//6
-			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0,	//7
+			-0.5, -0.5, 0.5, 0.0, 1.0, 0.0, 0.5, 0.0, 0.0, 0.0, -1.0, 0.0,	//7 //cube
 		];
 
 	}
@@ -450,27 +459,11 @@ function initialiseShaders() {
 			varying mediump vec2 texCoord;\
 			void main(void)  \
 			{ \
-				vec4 nN;\
-				vec4 v1, v2, v3, v4;\
-				vec3 v5;\
-				v1 = Mmatrix*vec4(myVertex,1.0);	\
-				v2 = Mmatrix*vec4(myVertex+myNormal,1.0);	\
-				v1.xyz = v1.xyz/v1.w;\
-				v2.xyz = v2.xyz/v1.w;\
-				v3 = v2 - v1;\
-				v5 = normalize(v3.xyz); \
 				gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(myVertex, 1.0);\
-					/* \
-				if (gl_Position.w != 0.0) \
-					gl_Position.x /= gl_Position.w; \
-				gl_Position.x += 1.0; \
-				if (gl_Position.w != 1.0) \
-					gl_Position.x *= gl_Position.w; */ \
-				color = 0.2*myColor+vec4(0.8,0.8,0.8,1.0)*0.5 * (dot(v5, vec3(1,1,1))+1.0);\
+				color = myColor;\
 				color.a = 1.0;\
 				texCoord = myUV; \
 			}';
-
 
 	gl.vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	gl.shaderSource(gl.vertexShader, vertexShaderSource);
@@ -518,6 +511,7 @@ function get_projection(angle, a, zMin, zMax) {
 var proj_matrix = get_projection(30, 1.0, 1, 7.0);
 var mov_matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 var view_matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+
 // translating z
 view_matrix[14] = view_matrix[14] - 5//zoom
 
@@ -602,6 +596,7 @@ function multiply$3(out, a, b) {
 	return out;
 }
 
+// Translate a matrix
 function translate(m, tx, ty, tz) {
 	var tm = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 	tm[12] = tx; tm[13] = ty; tm[14] = tz;
@@ -768,12 +763,14 @@ rotValueSmall = 0.0;
 incRotValue = 0.0;
 incRotValueSmall = 0.02;
 
+// rotate angle
 transX = 0.0;
 transY = 0.0;
 transZ = 0.0;
-
 frames = 1;
 tempRotValue = 0.0;
+
+// stop rotate fuction
 function stopRotate() {
 	if (incRotValue == 0.0) {
 		incRotValue = tempRotValue;
@@ -788,6 +785,7 @@ function animRotate() {
 	incRotValue += 0.01;
 }
 
+// process requirement when click button.
 function requireControl() {
 
 	if (shapebit == 1 && lock == 0) {
@@ -803,9 +801,7 @@ function requireControl() {
 		lock = 0;
 	}
 
-	if (viewbit != 0){
-
-		console.log(view_matrix[12],view_matrix[13],view_matrix[14]);
+	if (viewbit != 0) {
 
 		view_matrix[12] = xview;
 		view_matrix[13] = yview;
@@ -813,8 +809,7 @@ function requireControl() {
 		if (!initialiseShaders()) {
 			return;
 		}
-		viewbit = 0 ;
-
+		viewbit = 0;
 	}
 
 	if (zoombit != 5) {
@@ -861,8 +856,8 @@ function requireControl() {
 
 	mov_matrix = create$3();
 	frames += 1;
-	
-	rotAxis = [1,1,0];
+
+	rotAxis = [1, 1, 0];
 
 	switch (rotatebit) {
 
@@ -876,7 +871,7 @@ function requireControl() {
 			break;
 
 		case 4:
-			 rotateArbAxis(mov_matrix, rotAxis, rotValue);
+			rotateArbAxis(mov_matrix, rotAxis, rotValue);
 			break;
 	}
 
@@ -918,7 +913,6 @@ function renderScene() {
 	}
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
-	// gl.enable(gl.CULL_FACE);
 	gl.enable(gl.BLEND);
 	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 	gl.blendEquation(gl.FUNC_ADD);
@@ -935,22 +929,6 @@ function renderScene() {
 		gl.drawArrays(gl.TRIANGLES, 0, 36);
 
 	}
-
-	/*
-	var mov_matrix2 = mov_matrix.slice();
-	translate(mov_matrix2, 0.75, 0.75, 0.75);
-	rotateY(mov_matrix2, rotValueSmall);
-	scale(mov_matrix2, 0.25, 0.25, 0.25);
-	gl.uniformMatrix4fv(Mmatrix, false, mov_matrix2);
-	gl.drawArrays(gl.TRIANGLES, 0, 36);
-	*/
-	/*
-		var mov_matrix3 = mov_matrix2.slice(); 
-		translate(mov_matrix3, 0.75, -0.75, 0.75);
-		rotateY(mov_matrix3, rotValueSmall); 
-		scale(mov_matrix3, 0.25, 0.25, 0.25);
-		gl.uniformMatrix4fv(Mmatrix, false, mov_matrix3);
-		gl.drawArrays(gl.TRIANGLES, 0, 36);*/
 
 	document.getElementById("matrix0").innerHTML = mov_matrix[0].toFixed(4);
 	document.getElementById("matrix1").innerHTML = mov_matrix[1].toFixed(4);
@@ -993,8 +971,7 @@ function main() {
 	// Render loop
 	requestAnimFrame = (
 		function () {
-			//	return window.requestAnimationFrame || window.webkitRequestAnimationFrame 
-			//	|| window.mozRequestAnimationFrame || 
+
 			return function (callback) {
 				window.setTimeout(callback, 10, 10);
 			};

@@ -45,13 +45,14 @@ footer {
 
 
 }
-/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
 @media (max-width: 600px) {
   nav, article {
     width: 100%;
     height: auto;
   }
 }
+
+/* design modal */
 .modal {
     display: none;
     position: fixed;
@@ -95,12 +96,16 @@ li {
     border : 0;
     float: left;
 }
+
+/* moving  */
 #floatdiv {
 
   position:fixed; 
   width: 0px; 
   display:inline-block; 
-  left:0.5%; /* 창에서 오른쪽 길이 */ 
+  left:0.5%;
   margin:0; 
 }
+ 
+ 
 
