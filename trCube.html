@@ -14,10 +14,41 @@
 		welcome to my WebGL!
 	</header>
 
+	
+
+
 	<nav>
-		<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+		<div id="floatdiv">
+			<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+			<button onclick="changetoTetrahedron()">Tetrahedron </button>
+			<button onclick="changetoCube()">Cube </button>&nbsp;
+			<table border=1>
+				<tr>
+					<td id="matrix0">
+					<td id="matrix4">
+					<td id="matrix8">
+					<td id="matrix12">
+				<tr>
+					<td id="matrix1">
+					<td id="matrix5">
+					<td id="matrix9">
+					<td id="matrix13">
+				<tr>
+					<td id="matrix2">
+					<td id="matrix6">
+					<td id="matrix10">
+					<td id="matrix14">
+				<tr>
+					<td id="matrix3">
+					<td id="matrix7">
+					<td id="matrix11">
+					<td id="matrix15">
+			</table>
+			<p id="webTrX"> translate (0.0,0.0,0.0) </p>
+		
+		</div>
 		<br>
-	</nav>
+		</nav>
 
 	<article>
 		<ul>
@@ -186,31 +217,7 @@
 		</div>
 	</article>
 	<footer>
-		<button onclick="changetoTetrahedron()">Tetrahedron </button>&nbsp;
-		<button onclick="changetoCube()">Cube </button>&nbsp;
-		<table border=1>
-			<tr>
-				<td id="matrix0">
-				<td id="matrix4">
-				<td id="matrix8">
-				<td id="matrix12">
-			<tr>
-				<td id="matrix1">
-				<td id="matrix5">
-				<td id="matrix9">
-				<td id="matrix13">
-			<tr>
-				<td id="matrix2">
-				<td id="matrix6">
-				<td id="matrix10">
-				<td id="matrix14">
-			<tr>
-				<td id="matrix3">
-				<td id="matrix7">
-				<td id="matrix11">
-				<td id="matrix15">
-		</table>
-		<p id="webTrX"> translate (0.0,0.0,0.0) </p>
+		
 
 	</footer>
 	</div>
