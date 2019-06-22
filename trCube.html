@@ -18,37 +18,16 @@
 
 
 	<nav>
-		<div id="floatdiv">
-			<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
-			<button onclick="changetoTetrahedron()">Tetrahedron </button>
-			<button onclick="changetoCube()">Cube </button>&nbsp;
-			<table border=1>
-				<tr>
-					<td id="matrix0">
-					<td id="matrix4">
-					<td id="matrix8">
-					<td id="matrix12">
-				<tr>
-					<td id="matrix1">
-					<td id="matrix5">
-					<td id="matrix9">
-					<td id="matrix13">
-				<tr>
-					<td id="matrix2">
-					<td id="matrix6">
-					<td id="matrix10">
-					<td id="matrix14">
-				<tr>
-					<td id="matrix3">
-					<td id="matrix7">
-					<td id="matrix11">
-					<td id="matrix15">
-			</table>
-			<p id="webTrX"> translate (0.0,0.0,0.0) </p>
+			<div id="floatdiv">
+
+					<canvas id="helloapicanvas" style="border: none;" width="400" height="400"></canvas>
+					<button onclick="changetoTetrahedron()">Tetrahedron </button>
+					<button onclick="changetoCube()">Cube </button>&nbsp;
+
+			</div>
+
 		
-		</div>
-		<br>
-		</nav>
+	</nav>
 
 	<article>
 		<ul>
@@ -99,6 +78,30 @@
 			<input type="text" id="zTranslate" maxlength="4" style=width:30px;>
 			<button onclick="submitTrans(xTranslate.value, yTranslate.value, zTranslate.value)">Translate!</button>
 			<button onclick="resetTrans()">Reset</button><br><br>
+			<table border=1>
+					<tr>
+						<td id="matrix0">
+						<td id="matrix4">
+						<td id="matrix8">
+						<td id="matrix12">
+					<tr>
+						<td id="matrix1">
+						<td id="matrix5">
+						<td id="matrix9">
+						<td id="matrix13">
+					<tr>
+						<td id="matrix2">
+						<td id="matrix6">
+						<td id="matrix10">
+						<td id="matrix14">
+					<tr>
+						<td id="matrix3">
+						<td id="matrix7">
+						<td id="matrix11">
+						<td id="matrix15">
+				</table>
+				<p id="webTrX"> translate (0.0,0.0,0.0) </p>
+
 
 			<big><b>Axis Rotation</b></big>&nbsp;&nbsp;
 			<button id="rotation" onclick="clickbutton(rotate)">Source Code</button>
@@ -116,7 +119,6 @@
 			<button onclick="rotateShape(3)">Z Rotate Speed + 0.01</button>
 			<button onclick="rotateShape(4)">Axis Rotate Speed + 0.01</button>
 			<button onclick="stopRotate()">Stop Rotate</button>
-
 
 
 		</div>
@@ -217,7 +219,6 @@
 		</div>
 	</article>
 	<footer>
-		
 
 	</footer>
 	</div>

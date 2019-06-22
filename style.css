@@ -96,12 +96,11 @@ li {
     float: left;
 }
 #floatdiv {
+
   position:fixed; 
   width: 0px; 
   display:inline-block; 
   left:0.5%; /* 창에서 오른쪽 길이 */ 
-  top:12%; /* 창에서 위에서 부터의 높이 */ 
-  background-color: transparent; 
   margin:0; 
 }
 
